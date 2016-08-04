@@ -13,7 +13,7 @@ Known flaws:
 - Testing of link_finder and 
 
 Favourite features:
--Multithreading for faster performance
--Scrapes all static assets, including files held on the domain
--Prevents duplicating work by holding visited urls and files in a set
-
+- Multithreading for faster performance
+- Scrapes all static assets, including files held on the domain
+- Prevents duplicating work by holding visited urls and files in a set
+- Simple API for instantiating Crawler
