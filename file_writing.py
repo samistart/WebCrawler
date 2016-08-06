@@ -13,11 +13,11 @@ def get_file_path(project_name, page_url):
 
 
 def get_file_location(file_path):
+    result = ""
     if '/' in file_path:
         k = file_path.rfind("/")    #todo use os independent file seperators
-        return file_path[:k]
-    else:
-        return ""
+        result = file_path[:k]
+    return result
 
 
 def create_dir_from_file_path(file_path):

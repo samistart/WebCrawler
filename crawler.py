@@ -16,10 +16,11 @@ class Crawler:
     html_counter = 0
     initialised = False
 
-    def __init__(self, project_name, base_url, domain_name, is_first):
+    def __init__(self, project_name, base_url, is_first):
         Crawler.project_name = project_name
         Crawler.base_url = base_url
-        Crawler.domain_name = domain_name
+        Crawler.domain_name = urlparse(base_url).netloc
+        self.start_time = time.monotonic()
         if is_first:
             self.init_queue_and_crawled()
             self.start_thread()
@@ -33,6 +34,7 @@ class Crawler:
             page_url = Crawler.queue.pop()
             self.crawl(page_url)
             Crawler.initialised = True
+        print(str(time.monotonic() - self.start_time) + "seconds taken to crawl " + str(len(Crawler.crawled)) + "pages.")
 
     def start_thread(self):
         t = threading.Thread(target=self.loop)
@@ -58,7 +60,8 @@ class Crawler:
     def gather_links(page_url):
         html_string = ''
         try:
-            if urlparse(page_url).netloc != Crawler.domain_name:
+            url_info = urlparse(page_url)
+            if url_info.netloc != Crawler.domain_name:
                 return set()
             response = urlopen(page_url)
             if 'text/html' in response.getheader('Content-Type'):
@@ -67,7 +70,7 @@ class Crawler:
                 file_path = get_file_path(Crawler.project_name, page_url)
                 create_dir_from_file_path(file_path)
                 write_file(file_path, html_string)
-                scrape(page_url)
+                scrape(page_url, Crawler.domain_name)
                 link_finder = LinkFinder(Crawler.base_url, page_url)
                 link_finder.feed(html_string)
                 return link_finder.get_page_links()
