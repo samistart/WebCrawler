@@ -1,5 +1,4 @@
 import os
-from config import *
 import urllib.request
 import threading
 
@@ -40,6 +39,9 @@ def write_file(path, data):
 
 def asynchronous_url_retrieve(location, file_path):
     def target():
-        urllib.request.urlretrieve(location, file_path)
+        try:
+            urllib.request.urlretrieve(location, file_path)
+        except:
+            pass
     t = threading.Thread(target=target)
     t.start()
