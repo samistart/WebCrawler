@@ -1,4 +1,3 @@
-from link_finder import LinkFinder
 from scraping import *
 from urllib.request import urlparse
 from file_writing import *
@@ -34,6 +33,8 @@ class Crawler:
             page_url = Crawler.queue.pop()
             self.crawl(page_url)
             Crawler.initialised = True
+            if len(Crawler.queue) == 0:
+                time.sleep(5)
         print(str(time.monotonic() - self.start_time) + "seconds taken to crawl " + str(len(Crawler.crawled)) + "pages.")
 
     def start_thread(self):
@@ -71,9 +72,8 @@ class Crawler:
                 create_dir_from_file_path(file_path)
                 write_file(file_path, html_string)
                 scrape(page_url, Crawler.domain_name)
-                link_finder = LinkFinder(Crawler.base_url, page_url)
-                link_finder.feed(html_string)
-                return link_finder.get_page_links()
+                links = get_links(page_url, Crawler.base_url)
+                return links
             else:
                 file_path = get_file_path(Crawler.project_name, page_url)
                 create_dir_from_file_path(file_path)

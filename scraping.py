@@ -29,5 +29,14 @@ def scrape(url, domain_name):
                 scraped.add(location)
 
 
+def get_links(url, base_url):
+    links = set()
+    soup = BeautifulSoup(urlopen(url).read(), "html.parser")
+    for a in soup.find_all('a', href=True):
+        link = base_url + a['href']
+        links.add(link)
+    return links
+
+
 
 
