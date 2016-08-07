@@ -33,8 +33,6 @@ class Crawler:
             page_url = Crawler.queue.pop()
             self.crawl(page_url)
             Crawler.initialised = True
-            if len(Crawler.queue) == 0:
-                time.sleep(5)
         print(str(time.monotonic() - self.start_time) + "seconds taken to crawl " + str(len(Crawler.crawled)) + "pages.")
 
     def start_thread(self):
@@ -67,17 +65,17 @@ class Crawler:
             response = urlopen(page_url)
             if 'text/html' in response.getheader('Content-Type'):
                 html_bytes = response.read()
-                html_string = html_bytes.decode("utf-8")
+                soup = BeautifulSoup(html_bytes, "html.parser")
                 file_path = get_file_path(Crawler.project_name, page_url)
                 create_dir_from_file_path(file_path)
                 write_file(file_path, html_string)
-                scrape(page_url, Crawler.domain_name)
-                links = get_links(page_url, Crawler.base_url)
+                scrape(soup, Crawler.domain_name)
+                links = get_links(soup, Crawler.base_url)
                 return links
             else:
                 file_path = get_file_path(Crawler.project_name, page_url)
                 create_dir_from_file_path(file_path)
-                urlretrieve(page_url, file_path)
+                asynchronous_url_retrieve(page_url, file_path)
         except:
             print('Unable to crawl: ' + page_url)
             return set()

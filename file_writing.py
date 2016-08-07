@@ -1,10 +1,11 @@
 import os
 from config import *
-from urllib.request import urlparse
+import urllib.request
+import threading
 
 
 def get_file_path(project_name, page_url):
-    path = urlparse(page_url).path
+    path = urllib.request.urlparse(page_url).path
     if path.endswith("/"):  #todo use os independent file seperators
         path = path[:-1]
     if '.' not in path:
@@ -35,3 +36,10 @@ def create_dir(directory):
 def write_file(path, data):
     with open(path, 'w') as f:
         f.write(data)
+
+
+def asynchronous_url_retrieve(location, file_path):
+    def target():
+        urllib.request.urlretrieve(location, file_path)
+    t = threading.Thread(target=target)
+    t.start()
