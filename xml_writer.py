@@ -1,5 +1,4 @@
 import lxml.etree as etree
-import xml.sax.saxutils as saxutils
 import config
 
 
